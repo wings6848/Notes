@@ -252,7 +252,7 @@
 
     比如目标`%.txt` 匹配 f1.txt 中的f1 ，`$*` 就表示 f1。
 
-##### 函数
+##### [函数](https://seisman.github.io/how-to-write-makefile/functions.html)
 
 `Makefile`可以使用函数，格式为：
 
@@ -260,3 +260,61 @@
     或者
     ${function arguments}
 
+字符串处理函数：
+
+* subst: $(subst <from>,<to>,<text>)
+
+    把字串 <text> 中的 <from> 字符串替换成 <to>
+
+* strip: $(strip <string>)
+
+    去掉 <string> 字串中开头和结尾的空字符。
+
+* filter: $(filter <pattern...>,<text>)
+
+    以 <pattern> 模式过滤 <text> 字符串中的单词，保留符合模式 <pattern> 的单词
+
+* sort: $(sort <list>)
+
+    给字符串 <list> 中的单词排序（升序）。
+
+* word: $(word <n>,<text>)
+
+    取字符串 <text> 中第 <n> 个单词。（从一开始）
+
+
+###### call函数
+
+call函数是唯一一个可以用来创建新的参数化的函数, 语法：
+
+    $(call <expression>,<parm1>,<parm2>,...,<parmn>)
+
+当`make`这个执行函数的时候，`<expression>`中的变量，例如 `$(1)`或者`$(2)`等，
+会被`<parm1>`，`<parm2>`，`<parm3>`依次取代。
+
+例如：
+
+    > cat Makefile
+    reverse = $(2) $(1)
+    test:
+        @echo $(call reverse,a,b)
+
+    > make test
+    a b
+
+###### shell函数
+
+shell函数也不像其它的函数。顾名思义，它的参数应该就是操作系统Shell的命令.
+
+例如：
+
+    > cat Makefile
+    test:
+        @echo "hello world" >> test.txt
+
+    .PHONY: shell
+    shell: test
+            @echo $(shell cat test.txt)
+
+    > make shell
+    hello world
